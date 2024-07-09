@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+
+/* Additional styles */
+.auth-form {
+    @apply mb-6;
+}
+
+.auth-form input {
+    @apply border border-gray-300 rounded px-4 py-2 w-full mb-4 focus:outline-none focus:ring-2 focus:ring-gray-500;
+}
+
+.auth-form button {
+    @apply bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded;
+}
+
+.auth-form button[type="button"] {
+    @apply text-white hover:underline;
+}

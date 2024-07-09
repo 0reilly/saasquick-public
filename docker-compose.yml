@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+    mongo:
+        image: mongo
+        restart: always
+        ports:
+            - 27017:27017
+        volumes:
+            - mongo-data:/data/db
+
+    server:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        volumes:
+            - ./server/../output:/app/output
+            - ./server/../projects:/app/projects
+            - /var/run/docker.sock:/var/run/docker.sock
+        restart: always
+        ports:
+            - 4242:4242
+        env_file:
+            - .env
+        environment:
+            - MONGODB_URI=${MONGODB_URI}
+            - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+            - OPENAI_API_KEY=${OPENAI_API_KEY}
+            - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+            - JWT_SECRET=${JWT_SECRET}
+            - CLIENT_URL=${CLIENT_URL}
+            - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+            - DO_SPACES_ENDPOINT=${DO_SPACES_ENDPOINT}
+            - DO_SPACES_KEY=${DO_SPACES_KEY}
+            - DO_SPACES_SECRET=${DO_SPACES_SECRET}
+            - DO_SPACES_BUCKET=${DO_SPACES_BUCKET}
+            - GEMINI_API_KEY=${GEMINI_API_KEY}
+        depends_on:
+            - mongo
+
+    client:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        volumes:
+            - ./client:/app
+            - /etc/letsencrypt/live/saas-quick.com:/etc/letsencrypt/live/saas-quick.com:ro
+            - /etc/letsencrypt/archive/saas-quick.com:/etc/letsencrypt/archive/saas-quick.com:ro
+        environment:
+            - REACT_APP_API_URL=/api
+        restart: always
+        ports:
+            - 80:80
+            - 443:443
+        depends_on:
+            - server
+
+volumes:
+    mongo-data:

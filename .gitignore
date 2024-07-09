@@ -1,0 +1,5 @@
+node_modules/
+output/
+projects/
+client/build/
+.env
